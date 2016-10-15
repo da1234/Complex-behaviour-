@@ -30,7 +30,7 @@ class RSPmodel:
             for pos in n_coords: 
                 if pos <=grd_sz and pos >=1:
                     
-                    pos = pos
+                    pass
                 
                 else: 
                     pos = abs(pos-grd_sz)
