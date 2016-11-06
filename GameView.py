@@ -4,8 +4,8 @@
 import pygame
 import numpy as np 
 import random as rndm
-import player as pl 
-import RSPmodel as m
+import PlayerModel as pl 
+import GameModel as m
 import matplotlib.pyplot as plt
  
 # Define some colors
