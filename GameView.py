@@ -9,6 +9,397 @@ import numpy as np
 import math 
 
 
+###mutations
+
+def mutate_single(model):
+    percent = 0.5
+    number_of_mutations = int(model.num_agents * percent)
+
+    players_to_mutate = []
+    player_ids = []
+    # all_players = model.schedule.agents[random.randint(0, 6399)]
+    i = 0
+
+    if model.stable and model.mutate_count < 1:
+        model.mutate_count += 1
+        while i < number_of_mutations:
+
+            random_player = model.schedule.agents[random.randint(0, 6399)]
+
+            if random_player.id not in player_ids:
+                player_ids.append(random_player.id)
+                players_to_mutate.append(random_player)
+                i += 1
+
+        for player in players_to_mutate:
+
+            current_strat = player.current_strategy
+
+            if current_strat == 1:
+                player.next_strategy = random.randint(2, 3)
+            elif current_strat == 2:
+                player.next_strategy = random.randrange(1, 4, 2)
+            elif current_strat == 3:
+                player.next_strategy = random.randint(1, 2)
+
+    print(len(players_to_mutate))
+
+    
+
+
+
+
+###Frustration 
+def Frustration2(model):
+        
+    cnt =0
+
+    if model.beg ==False:
+
+        for player,x,y in model.grid.coord_iter():
+
+            n_strats = []
+            p_strat = player.get_current_strat()
+
+            for neighbs in model.grid.get_neighbors(
+            player.pos,
+            moore=True,
+            include_center=False, radius=1):   
+                
+                n_strats.append(neighbs.get_current_strat())
+            
+            for indx, n_strat in enumerate(n_strats):
+                  
+                
+                for k in range(2):
+                
+                    if p_strat[k] == 1 and n_strat[k] == 2:
+               
+                       cnt+=1
+                        
+            
+                    elif p_strat[k] == 1 and n_strat[k] == 3:
+                
+                        pass
+                
+                    elif p_strat[k] == 2 and n_strat[k] == 1:
+                
+                        pass
+                 
+                    elif p_strat[k] == 2 and n_strat[k] == 3:
+
+                        cnt+=1
+                 
+                    elif p_strat[k] == 3 and n_strat[k] == 1:
+                
+                       cnt+=1
+                 
+                    elif p_strat[k] == 3 and n_strat[k] == 2:
+            
+                       pass
+                 
+                    else: 
+                        pass
+
+    model.beg=False
+
+    return cnt
+    
+            
+
+def Frustration(model):
+
+    cnt =0
+
+    if model.beg ==False:
+
+        for player,x,y in model.grid.coord_iter():
+
+            for neighbs in model.grid.get_neighbors(
+            player.pos,
+            moore=True,
+            include_center=False, radius=1):
+
+                if player.get_current_strat() !=neighbs.get_current_strat():
+            
+                    cnt+=1
+                    
+    model.beg=False
+
+    return cnt
+
+
+
+###counting the number of score 
+
+def count_draw(model):
+
+    cnt =0
+
+    if model.beg ==False:
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_prev_score() <0:
+
+                    cnt+=1
+    model.beg=False
+
+    return cnt
+
+
+
+###determining the spread of similar strats
+
+def var11(model):
+
+    if model.beginning[11] == True:
+
+        var = 0
+
+        model.beginning[11] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[1,1]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.RR_var = var
+
+    return model.RR_var
+
+def var12(model):
+
+    if model.beginning[12] == True:
+
+        var = 0
+
+        model.beginning[12] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[1,2]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.RP_var=var
+
+    return model.RP_var
+           
+def var13(model):
+
+    if model.beginning[13] ==True:
+
+        var = 0
+
+        model.beginning[13] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[1,3]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.RS_var=var
+
+    return model.RS_var
+
+def var21(model):
+
+    if model.beginning[21] == True:
+
+        var = 0
+
+        model.beginning[21] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[2,1]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.PR_var=var
+
+    return model.PR_var
+
+def var22(model):
+
+    if model.beginning[22] == True:
+
+        var = 0
+
+        model.beginning[22] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[2,2]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.PP_var=var
+
+    return model.PP_var
+
+def var23(model):
+
+    if model.beginning[23] == True:
+
+        var = 0
+
+        model.beginning[23] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[2,3]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.PS_var=var
+
+    return model.PS_var
+
+def var31(model):
+
+    if model.beginning[31] == True:
+
+        var = 0
+
+        model.beginning[31] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[3,1]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.SR_var=var
+
+    return model.SR_var
+
+def var32(model):
+
+    if model.beginning[32] == True:
+
+        var = 0
+
+        model.beginning[32] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[3,2]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.SP_var=var
+
+    return model.SP_var
+
+def var33(model):
+
+    if model.beginning[33] == True:
+
+        var = 0
+
+        model.beginning[33] = False
+
+        pos = []
+
+        for player,x,y in model.grid.coord_iter():
+
+            if player.get_current_strat() ==[3,3]:
+
+                pos.append([x,y])
+
+
+        pos = np.asarray(pos)
+
+        std = np.std(pos)
+        var = std
+        model.SS_var=var      
+
+    return model.SS_var
+
+
+
+##whats in the batch_run equilibrium
+
+def Equilibrium(model):
+
+    if model.stable:
+
+        model.running = False
+
+
+        for agent,x,y in model.grid.coord_iter():
+
+            first_strat = agent.get_current_strat()[0]
+            second_strat = agent.get_current_strat()[1]
+
+            model.equilib[str(first_strat)+str(second_strat)]=1
+
+    return model.equilib 
+
+
+
+
+
 
 ##batch_run takeover?
 
@@ -95,7 +486,60 @@ def count_strat5(model):
             cnt+=1
 
     model.SP.append(cnt)
+    
     return cnt
+
+def count_strat6(model):
+    cnt = 0
+
+    for player,x,y in model.grid.coord_iter():
+
+        if player.get_current_strat() ==6:
+
+            cnt+=1
+
+    model.A.append(cnt)
+    return cnt
+
+
+def count_strat7(model):
+    cnt = 0
+
+    for player,x,y in model.grid.coord_iter():
+
+        if player.get_current_strat() ==7:
+
+            cnt+=1
+
+    model.F.append(cnt)
+    return cnt
+
+
+def count_strat8(model):
+    cnt = 0
+
+    for player,x,y in model.grid.coord_iter():
+
+        if player.get_current_strat() ==8:
+
+            cnt+=1
+
+    model.G.append(cnt)
+    return cnt
+
+
+def count_strat9(model):
+    cnt = 0
+
+    for player,x,y in model.grid.coord_iter():
+
+        if player.get_current_strat() ==9:
+
+            cnt+=1
+
+    model.H.append(cnt)
+    return cnt
+
     
 
 
@@ -283,7 +727,7 @@ def stability_check(model):
 
 class GameModel(Model):
     """A model with some number of agents."""
-    def __init__(self, N, width, height,SINGLE=False, LIZSPOC=False):
+    def __init__(self, N, width, height,SINGLE=False, LIZSPOC=False,NINEWAY=False):
         self.num_agents = N
         self.grid = SingleGrid(width, height, True)
         self.schedule = SimultaneousActivation(self)   
@@ -291,6 +735,11 @@ class GameModel(Model):
         ##for batch runs
         self.running = True
         self.stable = False
+        ##collecting initial data
+        self.beg=True
+        self.beginning = {11:True,12:True,13:True,21:True,22:True,23:True,31:True,32:True,33:True}
+        self.equilib = {}
+        
 
         ###keeping track of the numbers of each strat 
 
@@ -310,6 +759,20 @@ class GameModel(Model):
             self.SP = []
             self.all_strats = [self.R,self.P,self.S, self.L, self.SP]
 
+        elif NINEWAY:
+
+            self.R = []
+            self.P = []
+            self.S = []
+            self.SP = []
+            self.L = []
+            self.A = []
+            self.F = []
+            self.G = []
+            self.H = []
+            self.all_strats = [self.R,self.P,self.S, self.SP, self.L, self.A, self.F, self.G, self.H]
+
+
   
         else:
             self.RR = []
@@ -325,6 +788,19 @@ class GameModel(Model):
             self.SS = []
 
 
+            self.RR_var=0
+            self.RP_var=0
+            self.RS_var=0
+
+            self.PR_var=0
+            self.PP_var=0
+            self.PS_var=0
+
+            self.SR_var=0
+            self.SP_var=0
+            self.SS_var=0
+
+
             
             self.all_strats = [self.RR,self.RP,self.RS,self.PR,self.PP,self.PS,self.SR,self.SP,self.SS]
             
@@ -336,7 +812,7 @@ class GameModel(Model):
 
             if SINGLE == True:
                 strat = random.randint(1,3)
-                a = GameAgent(i, self,strat,SINGLE,LIZSPOC)
+                a = GameAgent(i, self,strat,SINGLE,LIZSPOC,NINEWAY)
                 self.schedule.add(a)
 
                 self.datacollector = DataCollector(model_reporters={"strat1 cnt":count_strat1,"strat2 cnt":count_strat2,"strat3 cnt":count_strat3,
@@ -344,22 +820,46 @@ class GameModel(Model):
 
             elif LIZSPOC == True:
                 strat = random.randint(1,5)
-                a = GameAgent(i, self,strat,SINGLE,LIZSPOC)
+                a = GameAgent(i, self,strat,SINGLE,LIZSPOC,NINEWAY)
                 self.schedule.add(a)
 
                 self.datacollector = DataCollector(model_reporters={"strat1 cnt":count_strat1,"strat2 cnt":count_strat2,"strat3 cnt":count_strat3, "strat4 cnt":count_strat4, "strat5 cnt":count_strat5,
                                                                     "takeOver":takeOver})
+
+
+            elif NINEWAY == True:
+                strat = random.randint(1,9)
+                a = GameAgent(i, self,strat,SINGLE,LIZSPOC,NINEWAY)
+                self.schedule.add(a)
+
+##                self.datacollector = DataCollector(model_reporters={"strat1 cnt":count_strat1,"strat2 cnt":count_strat2,"strat3 cnt":count_strat3, "strat4 cnt":count_strat4, "strat5 cnt":count_strat5, "strat6 cnt":count_strat6, "strat7 cnt":count_strat7, "strat8 cnt":count_strat8, "strat9 cnt":count_strat9,
+##                                                                    "takeOver":takeOver})
+                self.datacollector = DataCollector(model_reporters={"strat1 cnt":count_strat1,"strat2 cnt":count_strat2,"strat3 cnt":count_strat3, "strat4 cnt":count_strat4, "strat5 cnt":count_strat5, "strat6 cnt":count_strat6, "strat7 cnt":count_strat7, "strat8 cnt":count_strat8, "strat9 cnt":count_strat9,"score 0":count_draw,})
+##            
+
+##            
             else:
                 strat1= random.randint(1,3)
                 strat2 = random.randint(1,3)
 
                 #print(strat1,strat2)
-                a = GameAgent(i, self,[strat1,strat2],SINGLE,LIZSPOC)
+                a = GameAgent(i, self,[strat1,strat2],SINGLE,LIZSPOC,NINEWAY)
                 self.schedule.add(a)                
+##                self.datacollector = DataCollector(model_reporters ={"strat11 cnt":count_strat11,"strat12 cnt":count_strat12,"strat13 cnt":count_strat13,
+##                             "strat21 cnt":count_strat21,"strat22 cnt":count_strat22,"strat23 cnt":count_strat23,
+##                             "strat31 cnt":count_strat31,"strat32 cnt":count_strat32,"strat33 cnt":count_strat33,
+##                                                                     "var11":var11,"var12":var12,"var13":var13,
+##                                                                     "var21":var21,"var22":var22,"var23":var23,
+##                                                                     "var31":var31,"var32":var32,"var33":var33,
+##                                                                     "Equilibrium":Equilibrium
+##                                                                 })
+                
                 self.datacollector = DataCollector(model_reporters ={"strat11 cnt":count_strat11,"strat12 cnt":count_strat12,"strat13 cnt":count_strat13,
                              "strat21 cnt":count_strat21,"strat22 cnt":count_strat22,"strat23 cnt":count_strat23,
-                             "strat31 cnt":count_strat31,"strat32 cnt":count_strat32,"strat33 cnt":count_strat33,
-                                                                 "takeOver":takeOver})               
+                             "strat31 cnt":count_strat31,"strat32 cnt":count_strat32,"strat33 cnt":count_strat33,"score 0":count_draw,"Frust":Frustration,
+                                            
+                                                                     "Equilibrium":Equilibrium
+                                                                 }) 
 
 
                 
@@ -396,15 +896,19 @@ class GameModel(Model):
 class GameAgent(Agent):
     
     """ An RPS player """
-    def __init__(self, unique_id, model,strategy,single,lizspoc):
+    def __init__(self, unique_id, model,strategy,single,lizspoc,nineway):
         super().__init__(unique_id, model)
 
         self.score= 0
+        self.prev_score=0
         self.id = unique_id
         self.single = single
         self.lizspoc = lizspoc
+        self.nineway = nineway
         self.current_strategy = strategy
         self.next_strategy = strategy
+        self.mutate_count = 0
+
 
     def set_next_strat(self, n_strat):
        
@@ -429,6 +933,12 @@ class GameAgent(Agent):
         
         self.score = n_score
 
+    def get_prev_score(self):
+        return self.prev_score
+        
+    def set_prev_score(self, n_score):
+        
+        self.prev_score = n_score
         
 
     def play(self):
@@ -439,6 +949,10 @@ class GameAgent(Agent):
 
         elif self.lizspoc:
             self._play_lizspoc()
+
+        elif self.nineway:
+            self._play_nineway()
+
             
         else:
             self._play_double()
@@ -637,7 +1151,94 @@ class GameAgent(Agent):
 
         #print("this is the players score and id",self.unique_id, self.get_score())
 
+    def _play_nineway(self):
 
+        n_strats = []
+
+        p_strat = self.get_current_strat()
+
+        neighbours = self.model.grid.get_neighbors(
+            self.pos,
+            moore=True,
+            include_center=False, radius=1)
+
+        self.results = np.zeros(len(neighbours))
+
+        for neighbour in neighbours:
+
+            n_strats.append(neighbour.get_current_strat())
+        #print("these are the neighbour strats",n_strats)
+
+        for indx, n_strat in enumerate(n_strats):
+
+ #           current_score = self.get_score()
+
+            if p_strat == 1:
+                if n_strat == 2 or n_strat == 5 or n_strat == 6 or n_strat == 8:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 3 or n_strat == 4 or n_strat == 7 or n_strat == 9:
+                    self.results[indx] += 1
+
+            elif p_strat == 2:
+                if n_strat == 3 or n_strat == 4 or n_strat == 7 or n_strat == 9:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 1 or n_strat == 5 or n_strat == 6 or n_strat == 8:
+                    self.results[indx] += 1
+
+            elif p_strat == 3:
+                if n_strat == 1 or n_strat == 5 or n_strat == 7 or n_strat == 8:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 2 or n_strat == 4 or n_strat == 6 or n_strat == 9:
+                    self.results[indx] += 1
+
+            elif p_strat == 4:
+                if n_strat == 1 or n_strat == 3 or n_strat == 7 or n_strat == 9:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 2 or n_strat == 5 or n_strat == 6 or n_strat == 8:
+                    self.results[indx] += 1
+
+            elif p_strat == 5:
+                if n_strat == 2 or n_strat == 4 or n_strat == 6 or n_strat == 9:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 1 or n_strat == 3 or n_strat == 7 or n_strat == 8:
+                    self.results[indx] += 1
+
+            elif p_strat == 6:
+                if n_strat == 2 or n_strat == 3 or n_strat == 4 or n_strat == 9:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 1 or n_strat ==5 or n_strat == 7 or n_strat == 8:
+                    self.results[indx] += 1
+
+            elif p_strat == 7:
+                if n_strat == 1 or n_strat == 5 or n_strat == 6 or n_strat == 8:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 2 or n_strat == 3 or n_strat == 4 or n_strat == 9:
+                    self.results[indx] += 1
+
+            elif p_strat == 8:
+                if n_strat == 2 or n_strat == 4 or n_strat == 5 or n_strat == 6:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 1 or n_strat == 3 or n_strat == 7 or n_strat == 9:
+                    self.results[indx] += 1
+
+            elif p_strat == 9:
+                if n_strat == 1 or n_strat == 3 or n_strat == 7 or n_strat == 8:
+ #                   self.set_score(current_score -1)
+                    self.results[indx] -= 1
+                elif n_strat == 2 or n_strat == 4 or n_strat == 5 or n_strat == 6:
+                    self.results[indx] += 1
+
+            else:
+                    pass
+        self.set_score(np.sum(self.results))
 
 
 
@@ -663,13 +1264,17 @@ class GameAgent(Agent):
          else:
                 pass
     
-            
-         self.set_score(0)
+
+##         self.set_prev_score(p_score)           
+##         self.set_score(0)
 
 
 
     def get_ready(self):
-        
+
+        ###trying to record scores 
+        self.set_prev_score(self.get_score())           
+        self.set_score(0)
         self.set_current_strat(self.get_next_strat())
     
     def step(self):
@@ -682,12 +1287,15 @@ class GameAgent(Agent):
         
 
 
-##x = GameModel(64,8,8,SINGLE=False,LIZSPOC=True)
-######
+##x = GameModel(100,10,10,SINGLE=False,LIZSPOC=False,NINEWAY=False)
+##
 ##while (x.running):
-####    #print(x.all_strats)
-##    x.step()
-####
+########    #print(x.all_strats)
+##   x.step()
+##
+##g= x.datacollector.get_model_vars_dataframe()
+##print(g.head(400))
+######
 ######for i in range(300):
 ######    x.step()
 ####    #print(x.schedule.agents[i].get_score())
@@ -717,32 +1325,7 @@ def takeOver_prob(run_data):
     
 
     
-
-##parameters = {"width": 10,
-##             "height": 10,
-##              "N": 100,
-##              "SINGLE":False}
-##
-##batch_run = BatchRunner(GameModel,
-##                        parameters,
-##                        iterations=100,
-##                        max_steps=300,
-##                        model_reporters={"takeOver":takeOver})
-##batch_run.run_all()
-##
-##
-##run_data = batch_run.get_model_vars_dataframe()
-####run_data.head()
-##
-##takeOver_prob(run_data)
-
-
-# 0.42, 0.46, 0.45 for 8x8 agents
-##0.26, 0.19, 0.15, 0.23, 0.24
-##plt.scatter(run_data.N, run_data.Gini)
-
-
-def get_hist_data(Single,width,height,N):
+def get_hist_data(width,height,N,Single,Lizspoc,nineway):
 
     probs_array = np.zeros(20)
 
@@ -752,7 +1335,11 @@ def get_hist_data(Single,width,height,N):
         parameters = {"width": width,
                  "height": height,
                   "N": N,
-                  "SINGLE":Single}
+                  "SINGLE":Single,
+                      "LIZSPOC":Lizspoc,
+                      "NINEWAY":nineway,
+                      }
+        
 
         batch_run = BatchRunner(GameModel,
                             parameters,
@@ -772,16 +1359,74 @@ def get_hist_data(Single,width,height,N):
     return probs_array
 
 
-#hist_data = get_hist_data(False,5,5,25)
+
+def get_spread_data(Single,Lizspoc,width,height,N):
+
+
+
+        parameters = {"width": width,
+                 "height": height,
+                  "N": N,
+                  "SINGLE":Single,
+                      "LIZSPOC":Lizspoc}
+        
+
+        batch_run = BatchRunner(GameModel,
+                            parameters,
+                            iterations=100,
+                            max_steps=300,
+                            model_reporters={"var11":var11,"var12":var12,"var13":var13,
+                                                                     "var21":var21,"var22":var22,"var23":var23,
+                                                                     "var31":var31,"var32":var32,"var33":var33,
+                                             "Equilibrium":Equilibrium})
+
+        batch_run.run_all()
+
+
+        run_data = batch_run.get_model_vars_dataframe()
+
+        print(run_data.head(99))
+
+
+#get_spread_data(Single=False,Lizspoc=False,width=8,height=8,N=64)
+
+
+    
+
+
+#hist_data = get_hist_data(Single=False,Lizspoc=False,nineway=True,width,height,N
 #print(hist_data)
 
-##
-##for size in range(13,19,2):
-####
-##    hist_data = get_hist_data(False,size,size,size**2)
-##    np.savetxt('/Users/darrelladjei/python/bsc/mesaStuff/SystemSizeData/' + str(size)+'.txt',hist_data)
-####
 
+##for size in range(17,19,2):
+##    hist_data = get_hist_data(size,size,size**2,Single=False,Lizspoc=False,nineway=True)
+##    np.savetxt('/Users/darrelladjei/python/bsc/mesaStuff/SystemSizeData/nineway' + str(size)+'.txt',hist_data)
+
+
+
+
+
+##
+##x = GameModel(100,10,10,SINGLE=True,LIZSPOC=False,NINEWAY=False)
+####
+##while (x.running):
+##########    #print(x.all_strats)
+##   x.step()
+####
+##g= x.datacollector.get_model_vars_dataframe()
+##print(g.head(400))
+########
+##for i in range(300):
+##    x.step()
+##    #print(x.schedule.agents[i].get_score())
+##graph = x.datacollector.get_model_vars_dataframe()
+##graph.plot()
+##plt.xlabel("Clock Ticks")
+##plt.ylabel("Number of Players")
+##plt.legend(loc=2)
+##plt.grid()    
+##plt.show()
+##plt.show()
     
 
         
