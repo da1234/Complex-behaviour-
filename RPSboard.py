@@ -36,11 +36,7 @@ for row in range(grd_sz):
     for column in range(grd_sz):
         #grid[row].append(0)  # Append a cell
         player = pl.Player(rndm.randint(1,3))
-        grid[row].append(player)
- 
-
- 
-   
+        grid[row].append(player)    
 # Initialize pygame
 pygame.init()
  
@@ -70,26 +66,16 @@ while not done:
             row = pos[1] // (HEIGHT + MARGIN)
             # Set that location to one
             grid[row][column] = 1
-            print("Click ", pos, "Grid coordinates: ", row, column)
-            
-        else:
-            
-            #for each player get his neighbours coords and play 
-            
+            print("Click ", pos, "Grid coordinates: ", row, column)            
+        else:            
+            #for each player get his neighbours coords and play             
             for row_pos,row_values in enumerate(grid):
-                for col_pos,col_val in enumerate(row_values):
-                    
+                for col_pos,col_val in enumerate(row_values):                    
                     plyr_coords = [row_pos+1,col_pos+1]
                     n_coords = model.get_player_n(plyr_coords,grd_sz)
                     n_values = model.get_n_values(n_coords, grid)
                     model.play(grid[row_pos][col_pos],n_values)
-                    
-                
-    
-                
-            
-            
- 
+
     # Set the screen background
     screen.fill(BLACK)
  
@@ -98,14 +84,11 @@ while not done:
         for column in range(10):
             color = WHITE
             if grid[row][column].get_strat() == 1:
-                color = GREEN
-                
+                color = GREEN                
             elif grid[row][column].get_strat() == 2:
-                color = BLUE
-                
+                color = BLUE                
             elif grid[row][column].get_strat() == 3:
-                color = RED
-                
+                color = RED                
             pygame.draw.rect(screen,
                              color,
                              [(MARGIN + WIDTH) * column + MARGIN,
