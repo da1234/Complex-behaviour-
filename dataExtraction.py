@@ -1,9 +1,6 @@
 import numpy as np
 
-
-
 def extract():
-
         for size in range(1,18,1):
           prob_array = np.zeros(20)
           cnt = 0        
