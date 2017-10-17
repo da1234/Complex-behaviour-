@@ -15,3 +15,5 @@ A randomly populated grid of 'Rock' (red), 'Paper' (green) and 'Scissors' (blue)
 After a few iterations, the grid evolves to form bands of colours!
 
 ![Grid after many iterations.](/images/clusters2.png?raw=true)
+
+Feel free to experiment with more additional stategies (eg 'Lizard', 'Spock' ...)!
