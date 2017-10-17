@@ -16,4 +16,4 @@ After a few iterations, the grid evolves to form bands of colours!
 
 ![Grid after many iterations.](/images/clusters2.png?raw=true)
 
-Feel free to experiment with more additional stategies (eg 'Lizard', 'Spock' ...)!
+Feel free to experiment with additional stategies (eg 'Lizard', 'Spock' ...)!
