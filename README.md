@@ -10,4 +10,8 @@ Run the project and enjoy our colourful display!
 
 A randomly populated grid of 'Rock' (red), 'Paper' (green) and 'Scissors' (blue) stategies is shown below.
 
+![Initially randomly populated grid.](/images/clusters1.png?raw=true)
 
+After a few iterations, the grid evolves to form bands of colours!
+
+![Grid after many iterations.](/images/clusters2.png?raw=true)
